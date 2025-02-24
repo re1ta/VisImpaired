@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">VisImpaired</string>
+    <string name="leftButton">Влево</string>
+    <string name="rightButton">Вправо</string>
+    <string name="confirmButton">Войти</string>
+    <string name="escapeButton">Назад</string>
+</resources>
