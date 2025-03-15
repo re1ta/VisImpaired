@@ -1,7 +1,6 @@
 package com.example.visimpaired.PhotoAnalysis;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.example.visimpaired.Interfaces.LifecycleItem;
 import com.example.visimpaired.Menu.Item;
@@ -15,11 +14,6 @@ public class ChooseOrMakePhotoItem extends Item implements LifecycleItem {
     public ChooseOrMakePhotoItem(String name, Activity activity) {
         super(name);
         this.activity = activity;
-    }
-
-    @Override
-    public void onEnter() {
-        loadItems();
     }
 
     @Override

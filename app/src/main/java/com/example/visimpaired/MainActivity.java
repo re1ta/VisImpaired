@@ -16,6 +16,7 @@ import com.example.visimpaired.Menu.Menu;
 import com.example.visimpaired.Menu.Item;
 import com.example.visimpaired.PhotoAnalysis.ChooseOrMakePhotoItem;
 import com.example.visimpaired.PhotoAnalysis.PhotoService;
+import com.example.visimpaired.Weather.CitiesWeatherList;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Menu createStartMenu(){
         LinkedHashMap<String, Item> items = new LinkedHashMap<>();
         items.put("Почта", new MailFolderList("Почта"));
+        items.put("Погода", new CitiesWeatherList("Погода", MainActivity.this));
         items.put("Настройки", new Item("Настройки"));
         items.put("Послушать, что на фото", new ChooseOrMakePhotoItem("Послушать, что на фото", getActivity()));
         Item rootMenu = new Item("Главное меню", items);

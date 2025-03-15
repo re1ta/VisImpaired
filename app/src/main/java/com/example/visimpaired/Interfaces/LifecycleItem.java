@@ -3,7 +3,7 @@ import com.example.visimpaired.Menu.Item;
 
 public interface LifecycleItem {
 
-    void onEnter();
+    default void onEnter(){loadItems();}
 
     default void onEscape() {
         if (this instanceof Item) {
