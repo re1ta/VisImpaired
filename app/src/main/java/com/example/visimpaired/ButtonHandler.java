@@ -48,7 +48,6 @@ public class ButtonHandler{
         return () -> {
             vibrate();
             action.run();
-            TTSConfig.getInstance(context).speak(menu.getSelected());
         };
     }
 
@@ -57,8 +56,8 @@ public class ButtonHandler{
         if (selectedItem != null) {
             if (selectedItem.isMenu()) {
                 menu.enterSelectedItem();
-            } else {
-                TTSConfig.getInstance(context).speak(selectedItem.getName());
+            } else if (selectedItem instanceof LifecycleItem){
+                ((LifecycleItem) selectedItem).onEnter();
             }
         }
     }

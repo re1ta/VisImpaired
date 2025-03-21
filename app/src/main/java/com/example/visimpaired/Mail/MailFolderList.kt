@@ -11,12 +11,10 @@ import java.util.Properties
 import javax.mail.Session
 import javax.mail.Store
 
-class MailFolderList(name: String?, private val context: Context) : Item(name), LifecycleItem {
+class MailFolderList(name: String?, private val context: Context) : Item(context, name), LifecycleItem {
 
     private var store : Store
-    private var folders : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item("Подождите, Пожалуйста"))
-    private var countEnter = 0
-
+    private var folders : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))
     ///DRmbQ8wry0zygciMjxxV
 
     init {
@@ -30,11 +28,6 @@ class MailFolderList(name: String?, private val context: Context) : Item(name), 
     }
 
     override fun loadItems() {
-        countEnter += 1
-        println(countEnter)
-        if(countEnter > 1){
-            return
-        }
         (context as MainActivity).disableKeyboard()
         items = folders
         openMailSession()

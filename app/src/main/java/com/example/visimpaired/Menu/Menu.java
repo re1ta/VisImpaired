@@ -1,6 +1,9 @@
 package com.example.visimpaired.Menu;
 
+import android.content.Context;
+
 import com.example.visimpaired.Interfaces.LifecycleItem;
+import com.example.visimpaired.TTSConfig;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,10 +13,12 @@ public class Menu {
 
     private Item currentMenu;
     private String selected;
+    private Context context;
 
-    public Menu(Item rootMenu) {
+    public Menu(Item rootMenu, Context context) {
         this.currentMenu = rootMenu;
         this.selected = getFirstItem();
+        this.context = context;
     }
 
     public void changeSelectedItem(String direction) {
@@ -27,6 +32,7 @@ public class Menu {
                 default -> throw new IllegalArgumentException("Invalid direction: " + direction);
             };
             selected = keys.get(newIndex);
+            TTSConfig.getInstance(context).speak(selected);
         }
     }
 
@@ -65,6 +71,10 @@ public class Menu {
                     currentMenu = selectedItem;
                     selected = getFirstItem();
                     if(selected == null){
+                        if (selectedItem.getDescription() != null)
+                            TTSConfig.getInstance(context).speak(selectedItem.getDescription());
+                        else
+                            TTSConfig.getInstance(context).speak(selectedItem.getName());
                         currentMenu = lastMenu;
                         selected = getFirstItem();
                     }

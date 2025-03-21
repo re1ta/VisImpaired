@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
 
-class WeatherForcastItem( name: String?, val context: Context?, private val city: String?) : Item(name), LifecycleItem{
+class WeatherForcastItem( name: String?, private val context: Context?, private val city: String?) : Item(context, name), LifecycleItem{
 
     private val command = name;
 

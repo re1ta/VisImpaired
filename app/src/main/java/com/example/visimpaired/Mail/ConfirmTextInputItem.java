@@ -12,7 +12,7 @@ public class ConfirmTextInputItem extends Item implements LifecycleItem {
     private String field;
 
     public ConfirmTextInputItem(String name, Context context, String field) {
-        super(name);
+        super(context, name);
         this.context = context;
         this.field = field;
     }

@@ -13,7 +13,7 @@ public class ChooseWeatherForcastList extends Item implements LifecycleItem {
     private String name;
 
     public ChooseWeatherForcastList(String name, Context context) {
-        super(name);
+        super(context, name);
         this.name = name;
         this.context = context;
     }

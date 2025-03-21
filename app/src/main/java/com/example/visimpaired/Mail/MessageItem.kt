@@ -15,9 +15,10 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMultipart
 import javax.mail.util.ByteArrayDataSource
 
-class MessageItem (context: Context, name: String?, private val messageItem: Message): Item(name), LifecycleItem {
+class MessageItem (private val context: Context, name: String?, private val messageItem: Message): Item(context, name), LifecycleItem {
 
     private var senders : String = ""
+    private var mail : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))
 
     init {
         val sendersFromMessage = messageItem.from
@@ -33,87 +34,22 @@ class MessageItem (context: Context, name: String?, private val messageItem: Mes
     }
     private fun parseMailMessage(message: Message): String {
         return try {
-            parseBytesToText(message.content, getBoundary(messageItem))
+            ((message.content as MimeMultipart).getBodyPart(0).content as String)
         } catch (e : Exception) {
             e.printStackTrace()
             "Не удалось загрузить письмо"
         }
     }
 
-    private fun parseBytesToText(bytesInput: Any, contentType: String) : String {
-        var contentTypeBody = contentType
-        var inputStream = bytesInput as InputStream
-        var multipartBody : BodyPart? = null
-        if (contentTypeBody.contains("multipart/")){
-            if (contentTypeBody.contains("mixed")) {
-                multipartBody = MimeMultipart(ByteArrayDataSource(bytesInput, contentType)).getBodyPart(0)
-                multipartBody = MimeMultipart(ByteArrayDataSource(multipartBody.inputStream, multipartBody.contentType)).getBodyPart(0)
-                inputStream = multipartBody.inputStream as InputStream
-                contentTypeBody = multipartBody.contentType.lowercase()
-            }
-            if (contentTypeBody.contains("related")) {
-                multipartBody = MimeMultipart(ByteArrayDataSource(multipartBody?.inputStream?:inputStream, multipartBody?.contentType?:contentTypeBody)).getBodyPart(0)
-                contentTypeBody = multipartBody.contentType.lowercase()
-                inputStream = multipartBody.inputStream as InputStream
-            }
-            if (contentTypeBody.contains("alternative")) {
-                val multipart = MimeMultipart(ByteArrayDataSource(inputStream, contentTypeBody))
-                for (i in 0..<multipart.count) {
-                    val bodyPart = multipart.getBodyPart(i)
-                    if (bodyPart.content != null) {
-                        contentTypeBody = bodyPart.contentType.toString().lowercase()
-                        if (contentTypeBody.contains("text/plain")) {
-                            return bytesArrayToPlainText(bodyPart.content)
-                        } else if (contentTypeBody.contains("text/html")) {
-                            return bytesArrayToHtmlText(bodyPart.content)
-                        }
-                    }
-                }
-            }
-        }
-        if (contentTypeBody.contains("text/html")) {
-            return bytesArrayToHtmlText(inputStream)
-        }
-        return "Ошибка вывода содержимого письма!"
-    }
-
-    //message.getContentType() иногда работает неисправно и отдаёт пустое boundary=""
-    //Для этого нужен метод getBoundary(), который 100% достаёт не пустое boundary
-    private fun getBoundary(message: Message) : String{
-        val headers = message.allHeaders
-        for (header in headers) {
-            if (header.name.lowercase() == "content-type") return header.value
-        }
-        return "Не удалось загрузить письмо"
-    }
-
-    private fun bytesArrayToPlainText(bytesInput: Any) : String {
-        return parseInputStream(bytesInput as InputStream).toString().trim().replace("\\s+".toRegex(), " ")
-    }
-
-    private fun bytesArrayToHtmlText(bytesInput: Any) : String{
-        val parsedBody = parseInputStream(bytesInput as InputStream)
-        val htmlText = Jsoup.parse(parsedBody.toString()).text()
-        return htmlText.trim().replace("\\s+".toRegex(), " ")
-    }
-
-    private fun parseInputStream(content: InputStream) : ByteArrayOutputStream {
-        val out = ByteArrayOutputStream()
-        var c: Int
-        while ((content.read().also { c = it }) != -1) {
-            out.write(c)
-        }
-        return out
-    }
-
-
-
     override fun loadItems() {
+        items = mail
         CoroutineScope(Dispatchers.IO).launch {
             val mail = LinkedHashMap<String, Item>()
-            mail["Отправитель"] = Item(senders)
-            mail["Тема"] = Item(messageItem.subject?:"Нет темы")
-            mail["Содержание письма"] = Item(parseMailMessage(messageItem))
+            mail["Отправитель"] = Item(context,"Отправитель", senders)
+            mail["Тема"] = Item(context,"Тема", messageItem.subject?:"Нет темы")
+            mail["Содержание письма"] = Item(context,"Содержание письма", parseMailMessage(messageItem))
+            items = mail
+            if (items.containsKey("Подождите, Пожалуйста")) items.remove("Подождите, Пожалуйста")
         }
     }
 }

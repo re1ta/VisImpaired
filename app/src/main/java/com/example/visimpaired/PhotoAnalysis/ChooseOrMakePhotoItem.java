@@ -13,7 +13,7 @@ public class ChooseOrMakePhotoItem extends Item implements LifecycleItem {
     private int countEnter = 0;
 
     public ChooseOrMakePhotoItem(String name, Activity activity) {
-        super(name);
+        super(activity, name);
         this.activity = activity;
     }
 

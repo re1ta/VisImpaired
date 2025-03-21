@@ -9,37 +9,36 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.mail.Folder
 
-class FolderMailMode(private val context: Context, name: String?, private val folder: Folder): Item(name), LifecycleItem {
+class FolderMailMode(private val context: Context, name: String?, private val folder: Folder): Item(context, name), LifecycleItem {
     private var page = 0
     private var borderReached = false
     private val PAGE_SIZE = 20
+    private var mails : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))
 
-     fun loadMails(direction: String) {
+
+    fun loadMails(direction: String) {
          CoroutineScope(Dispatchers.IO).launch {
-             val mails = LinkedHashMap<String, Item>()
              val totalMessages = folder.messageCount
-             println("кол-во писем $totalMessages")
              if (totalMessages == 0) return@launch
              page = when (direction) {
                  "back" -> page - 1
                  "forward" -> page + 1
-                 else -> {
-                     0
-                 }
+                 else -> { 0 }
              }
+             println(page)
              val (start, end) = getMessageRange(page, totalMessages, PAGE_SIZE)
              val messages = if (PAGE_SIZE < totalMessages) {
                  folder.getMessages(start, end)
              } else {
                  folder.getMessages()
              }
-             if (page != 1) mails["Страница $page"] = NextPageMail(context, "back")
+             mails.clear()
+             if (page != 1) mails["Страница " + (page - 1)] = NextPageMail(context, "back")
              for (message in messages.reversed()) {
-                 mails[message.subject ?: "Нет темы"] =
-                     MessageItem(context, message.subject ?: "Нет темы", message)
+                 mails[message.subject ?: "Нет темы"] = MessageItem(context, message.subject ?: "Нет темы", message)
              }
-             if ((page * PAGE_SIZE) < totalMessages) mails["Страница $page"] =
-                 NextPageMail(context, "forward")
+             if ((page * PAGE_SIZE) < totalMessages) mails["Страница " + (page + 1)] = NextPageMail(context, "forward")
+             if (mails.containsKey("Подождите, Пожалуйста")) mails.remove("Подождите, Пожалуйста")
              items = mails
          }
     }
@@ -51,10 +50,11 @@ class FolderMailMode(private val context: Context, name: String?, private val fo
     }
 
     override fun onEnter() {
+        items = mails
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.IO) {
-                    folder.open(Folder.READ_ONLY);
+                    folder.open(Folder.READ_ONLY)
                     loadMails("forward")
                 }
             } catch (e: Exception) {
@@ -78,7 +78,5 @@ class FolderMailMode(private val context: Context, name: String?, private val fo
     }
 
 
-    override fun loadItems() {
-        loadMails("forward")
-    }
+    override fun loadItems() {}
 }

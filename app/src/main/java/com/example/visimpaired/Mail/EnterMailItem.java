@@ -15,7 +15,7 @@ public class EnterMailItem extends Item implements LifecycleItem {
     private String password;
 
     public EnterMailItem(String name, Context context) {
-        super(name);
+        super(context, name);
         this.context = context;
     }
 
