@@ -4,4 +4,5 @@
     <string name="rightButton">Вправо</string>
     <string name="confirmButton">Войти</string>
     <string name="escapeButton">Назад</string>
+    <string name="textInput">Ввод текста</string>
 </resources>

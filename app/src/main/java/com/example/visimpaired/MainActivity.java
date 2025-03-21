@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.visimpaired.Mail.EnterMailItem;
 import com.example.visimpaired.Mail.MailFolderList;
 import com.example.visimpaired.Menu.Menu;
 import com.example.visimpaired.Menu.Item;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.textInput).setVisibility(View.INVISIBLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         menu = createStartMenu();
         new ButtonHandler(getContext(), menu).setupButton(getAllButtons());
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Menu createStartMenu(){
         LinkedHashMap<String, Item> items = new LinkedHashMap<>();
-        items.put("Почта", new MailFolderList("Почта"));
+        items.put("Почта", new EnterMailItem("Почта", MainActivity.this));
         items.put("Погода", new CitiesWeatherList("Погода", MainActivity.this));
         items.put("Настройки", new Item("Настройки"));
         items.put("Послушать, что на фото", new ChooseOrMakePhotoItem("Послушать, что на фото", getActivity()));
@@ -74,4 +78,19 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> choosePhotoActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> photoService.resultActivityChoosePhoto(result));
+
+    public void enableKeyboard(){
+        findViewById(R.id.textInput).setVisibility(View.VISIBLE);
+    }
+
+    public void disableKeyboard(){
+        findViewById(R.id.textInput).setVisibility(View.INVISIBLE);
+    }
+
+    public String getTextInput(){
+        EditText textInput = findViewById(R.id.textInput);
+        String text = String.valueOf(textInput.getText());
+        textInput.setText("");
+        return text;
+    }
 }

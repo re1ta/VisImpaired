@@ -26,6 +26,15 @@ android {
             )
         }
     }
+
+    packagingOptions {
+        exclude("META-INF/NOTICE.md")
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/DEPENDENCIES")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -36,6 +45,8 @@ android {
 }
 
 dependencies {
+    implementation("org.jsoup:jsoup:1.19.1")
+    implementation(libs.android.mail)
     implementation(libs.okhttp)
     implementation(libs.gson)
     implementation(libs.appcompat)

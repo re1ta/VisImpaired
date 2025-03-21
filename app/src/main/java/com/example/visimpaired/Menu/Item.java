@@ -1,5 +1,7 @@
 package com.example.visimpaired.Menu;
 
+import com.example.visimpaired.Interfaces.LifecycleItem;
+
 import java.util.LinkedHashMap;
 
 public class Item {
@@ -51,7 +53,7 @@ public class Item {
     }
 
     public boolean isMenu() {
-        return items != null && !items.isEmpty();
+        return (items != null && !items.isEmpty()) || (this instanceof LifecycleItem);
     }
 
     public Item findByName(String name){

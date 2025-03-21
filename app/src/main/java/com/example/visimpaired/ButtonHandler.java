@@ -55,9 +55,6 @@ public class ButtonHandler{
     private void handleConfirmButton() {
         Item selectedItem = menu.getCurrentMenu().getItems().get(menu.getSelected());
         if (selectedItem != null) {
-            if (selectedItem instanceof LifecycleItem) {
-                ((LifecycleItem) selectedItem).onEnter();
-            }
             if (selectedItem.isMenu()) {
                 menu.enterSelectedItem();
             } else {
@@ -69,9 +66,6 @@ public class ButtonHandler{
     private void handleEscapeButton() {
         Item currentMenu = menu.getCurrentMenu();
         if (currentMenu.getParent() != null) {
-            if (currentMenu instanceof LifecycleItem) {
-                ((LifecycleItem) currentMenu).onEscape();
-            }
             menu.goBack();
         } else {
             TTSConfig.getInstance(context).speak(currentMenu.getName());

@@ -21,17 +21,11 @@ public class Menu {
             LinkedHashMap<String, Item> items = currentMenu.getItems();
             List<String> keys = new ArrayList<>(items.keySet());
             int currentIndex = keys.indexOf(selected);
-            int newIndex;
-            switch (direction) {
-                case "left":
-                    newIndex = (currentIndex - 1 + keys.size()) % keys.size();
-                    break;
-                case "right":
-                    newIndex = (currentIndex + 1) % keys.size();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid direction: " + direction);
-            }
+            int newIndex = switch (direction) {
+                case "left" -> (currentIndex - 1 + keys.size()) % keys.size();
+                case "right" -> (currentIndex + 1) % keys.size();
+                default -> throw new IllegalArgumentException("Invalid direction: " + direction);
+            };
             selected = keys.get(newIndex);
         }
     }
@@ -50,8 +44,11 @@ public class Menu {
 
     private String getFirstItem() {
         if (currentMenu.isMenu()) {
-            List<String> keys = new ArrayList<>(currentMenu.getItems().keySet());
-            return keys.get(0);
+            if (currentMenu.getItems() != null) {
+                List<String> keys = new ArrayList<>(currentMenu.getItems().keySet());
+                return keys.get(0);
+            }
+            return null;
         }
         return null;
     }
@@ -64,8 +61,13 @@ public class Menu {
                     ((LifecycleItem) selectedItem).onEnter();
                 }
                 if (selectedItem.isMenu()) {
+                    Item lastMenu = currentMenu;
                     currentMenu = selectedItem;
                     selected = getFirstItem();
+                    if(selected == null){
+                        currentMenu = lastMenu;
+                        selected = getFirstItem();
+                    }
                 }
             }
         }
