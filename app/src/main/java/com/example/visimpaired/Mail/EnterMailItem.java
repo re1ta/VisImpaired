@@ -11,8 +11,6 @@ import java.util.LinkedHashMap;
 public class EnterMailItem extends Item implements LifecycleItem {
 
     private Context context;
-    private String login;
-    private String password;
 
     public EnterMailItem(String name, Context context) {
         super(context, name);
@@ -35,8 +33,4 @@ public class EnterMailItem extends Item implements LifecycleItem {
         this.setItems(saveAction);
     }
 
-    public void setPassword(String password) { this.password = password; }
-    public void setLogin(String login) { this.login = login; }
-    public String getPassword() { return password; }
-    public String getLogin() { return login; }
 }

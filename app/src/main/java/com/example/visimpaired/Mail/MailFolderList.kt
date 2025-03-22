@@ -1,6 +1,7 @@
 package com.example.visimpaired.Mail
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.visimpaired.Interfaces.LifecycleItem
 import com.example.visimpaired.MainActivity
 import com.example.visimpaired.Menu.Item
@@ -15,6 +16,7 @@ class MailFolderList(name: String?, private val context: Context) : Item(context
 
     private var store : Store
     private var folders : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))
+    private val shard: SharedPreferences = (context as MainActivity).activity.getPreferences(Context.MODE_PRIVATE)
     ///DRmbQ8wry0zygciMjxxV
 
     init {
@@ -44,7 +46,10 @@ class MailFolderList(name: String?, private val context: Context) : Item(context
     private fun openMailSession(){
         CoroutineScope(Dispatchers.IO).launch {
             //store.connect(host, (parent as EnterMailItem).login, (parent as EnterMailItem).password)
-            store.connect("imap.mail.ru", "ernest.ibatov@mail.ru", "DRmbQ8wry0zygciMjxxV")
+            val login = shard.getString("login", "")
+            val password = shard.getString("password", "")
+            println("$login $password")
+            store.connect("imap.mail.ru", login, password)
             val rootFolder = store.defaultFolder
             val foldersMail = rootFolder.list()
             for (folder in foldersMail) {

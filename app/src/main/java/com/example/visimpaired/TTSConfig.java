@@ -35,4 +35,10 @@ public class TTSConfig implements TextToSpeech.OnInitListener {
             textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
         }
     }
+
+    public void setSpeechRate(float rate) {
+        if (textToSpeech != null) {
+            textToSpeech.setSpeechRate(rate);
+        }
+    }
 }

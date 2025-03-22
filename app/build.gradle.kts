@@ -45,7 +45,8 @@ android {
 }
 
 dependencies {
-    implementation("org.jsoup:jsoup:1.19.1")
+    implementation(libs.datastore.core)
+    implementation(libs.jsoup)
     implementation(libs.android.mail)
     implementation(libs.okhttp)
     implementation(libs.gson)

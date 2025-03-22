@@ -3,16 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <Button
         android:id="@+id/leftButton"
         android:layout_width="234dp"
         android:layout_height="166dp"
         android:text="@string/leftButton"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/Фиолетовый"
+        android:textColorHint="@color/Фиолетовый"
+        android:textColorLink="@color/Фиолетовый"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="@color/Фиолетовый"
         tools:text="@string/leftButton" />
 
     <Button
@@ -20,9 +26,14 @@
         android:layout_width="234dp"
         android:layout_height="166dp"
         android:text="@string/rightButton"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/Фиолетовый"
+        android:textColorHint="@color/Фиолетовый"
+        android:textColorLink="@color/Фиолетовый"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="@color/Фиолетовый" />
 
     <Button
         android:id="@+id/confirmButton"
@@ -30,19 +41,29 @@
         android:layout_height="100dp"
         android:layout_marginTop="48dp"
         android:text="@string/confirmButton"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/Фиолетовый"
+        android:textColorHint="@color/Фиолетовый"
+        android:textColorLink="@color/Фиолетовый"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="@color/Фиолетовый" />
 
     <Button
         android:id="@+id/escapeButton"
         android:layout_width="150dp"
         android:layout_height="100dp"
         android:text="@string/escapeButton"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/Фиолетовый"
+        android:textColorHint="@color/Фиолетовый"
+        android:textColorLink="@color/Фиолетовый"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toBottomOf="@+id/confirmButton" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmButton"
+        app:rippleColor="@color/Фиолетовый" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/textInput"
