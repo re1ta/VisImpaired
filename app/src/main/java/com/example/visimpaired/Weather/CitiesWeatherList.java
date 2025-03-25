@@ -1,10 +1,13 @@
 package com.example.visimpaired.Weather;
 
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Activity;
 import android.content.res.XmlResourceParser;
 
 import com.example.visimpaired.Interfaces.LifecycleItem;
+import com.example.visimpaired.MainActivity;
 import com.example.visimpaired.Menu.Item;
 import com.example.visimpaired.R;
 
@@ -13,6 +16,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CitiesWeatherList extends Item implements LifecycleItem {
 
@@ -31,6 +35,11 @@ public class CitiesWeatherList extends Item implements LifecycleItem {
 
     private void parseCities(){
         LinkedHashMap<String, Item> cities = new LinkedHashMap<>();
+        Map<String, ?> shard = activity.getPreferences(MODE_PRIVATE).getAll();
+        String city = (String) shard.get("city");
+        if(city != null){
+            cities.put(city, new ChooseWeatherForcastList(city, activity));
+        }
         try (XmlResourceParser parser = activity.getResources().getXml(R.xml.cities)) {
             int eventType = parser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {

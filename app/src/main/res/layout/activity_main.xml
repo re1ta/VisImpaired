@@ -37,9 +37,8 @@
 
     <Button
         android:id="@+id/confirmButton"
-        android:layout_width="150dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="234dp"
+        android:layout_height="166dp"
         android:text="@string/confirmButton"
         android:textColor="@color/white"
         android:textColorHighlight="@color/Фиолетовый"
@@ -47,13 +46,13 @@
         android:textColorLink="@color/Фиолетовый"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rippleColor="@color/Фиолетовый" />
+        app:rippleColor="@color/Фиолетовый"
+        tools:layout_editor_absoluteY="7dp" />
 
     <Button
         android:id="@+id/escapeButton"
-        android:layout_width="150dp"
-        android:layout_height="100dp"
+        android:layout_width="234dp"
+        android:layout_height="166dp"
         android:text="@string/escapeButton"
         android:textColor="@color/white"
         android:textColorHighlight="@color/Фиолетовый"
@@ -63,6 +62,7 @@
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
         app:layout_constraintTop_toBottomOf="@+id/confirmButton"
+        app:layout_constraintVertical_bias="0.8"
         app:rippleColor="@color/Фиолетовый" />
 
     <com.google.android.material.textfield.TextInputEditText
