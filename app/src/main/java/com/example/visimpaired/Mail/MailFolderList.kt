@@ -45,10 +45,8 @@ class MailFolderList(name: String?, private val context: Context) : Item(context
 
     private fun openMailSession(){
         CoroutineScope(Dispatchers.IO).launch {
-            //store.connect(host, (parent as EnterMailItem).login, (parent as EnterMailItem).password)
             val login = shard.getString("login", "")
             val password = shard.getString("password", "")
-            println("$login $password")
             store.connect("imap.mail.ru", login, password)
             val rootFolder = store.defaultFolder
             val foldersMail = rootFolder.list()

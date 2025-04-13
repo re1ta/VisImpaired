@@ -25,7 +25,6 @@ class FolderMailMode(private val context: Context, name: String?, private val fo
                  "forward" -> page + 1
                  else -> { 0 }
              }
-             println(page)
              val (start, end) = getMessageRange(page, totalMessages, PAGE_SIZE)
              val messages = if (PAGE_SIZE < totalMessages) {
                  folder.getMessages(start, end)

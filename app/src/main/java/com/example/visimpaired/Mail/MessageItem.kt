@@ -37,7 +37,7 @@ class MessageItem (private val context: Context, name: String?, private val mess
             ((message.content as MimeMultipart).getBodyPart(0).content as String)
         } catch (e : Exception) {
             e.printStackTrace()
-            "Не удалось загрузить письмо"
+            return (((message.content as MimeMultipart).getBodyPart(0).content as MimeMultipart).getBodyPart(0).content as String)
         }
     }
 

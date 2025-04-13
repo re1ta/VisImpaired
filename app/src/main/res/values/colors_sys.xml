@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="Жёлтый">#B8A601</color>
-    <color name="Фиолетовый">#7751A6</color>
-    <color name="Красный">#C30000</color>
+    <color name="Жёлтый">#FFE600</color>
+    <color name="Фиолетовый">#CDA3FF</color>
+    <color name="Розовый">#FF9E9E</color>
 </resources>
