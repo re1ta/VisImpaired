@@ -1,11 +1,15 @@
 package com.example.visimpaired;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,15 +18,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.visimpaired.Mail.EnterMailItem;
-import com.example.visimpaired.Mail.MailFolderList;
 import com.example.visimpaired.Menu.Menu;
 import com.example.visimpaired.Menu.Item;
 import com.example.visimpaired.PhotoAnalysis.ChooseOrMakePhotoItem;
 import com.example.visimpaired.PhotoAnalysis.PhotoService;
 import com.example.visimpaired.Settings.SettingsList;
+import com.example.visimpaired.VoiceAssistant.VoiceAssistantService;
 import com.example.visimpaired.Weather.CitiesWeatherList;
 
 import java.util.LinkedHashMap;
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static Menu menu;
     private PhotoService photoService;
+    private VoiceAssistantService voiceService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +48,41 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         menu = createStartMenu();
         new ButtonHandler(getContext(), menu).setupButton(getAllButtons());
+        setShardSettings();
+        setVoiceAssistant();
+    }
+
+    private void setVoiceAssistant() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
+            return;
+        }
+        initializeVoiceService();
+    }
+
+    private void initializeVoiceService() {
+        ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                VoiceAssistantService.LocalBinder binder = (VoiceAssistantService.LocalBinder) service;
+                voiceService = binder.getService();
+                voiceService.initializeTTS(getApplicationContext(), MainActivity.this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                voiceService = null;
+            }
+        };
+
+        Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
+        startForegroundService(serviceIntent);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void setShardSettings() {
         Map<String, ?> shard = this.getPreferences(MODE_PRIVATE).getAll();
         Integer color = (Integer) shard.get("color");
         changeColorButtons(color == null ? R.color.Жёлтый : color);
@@ -71,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
         return MainActivity.this;
     }
 
-    public void takePhoto(){
+    public void takePhoto() {
         photoService = new PhotoService(this, makePhotoActivityResultLauncher);
         photoService.askOrMakePhoto();
     }
 
-    public void choosePhoto(){
+    public void choosePhoto() {
         photoService = new PhotoService(this, choosePhotoActivityResultLauncher);
         photoService.askOrChoosePhoto();
     }
@@ -97,14 +138,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.textInput).setVisibility(View.INVISIBLE);
     }
 
-    public String getTextInput(){
+    public String getTextInput() {
         EditText textInput = findViewById(R.id.textInput);
         String text = String.valueOf(textInput.getText());
         textInput.setText("");
         return text;
     }
 
-    public void changeColorButtons(int color){
+    public void changeColorButtons(int color) {
         List<Object> buttons = getAllButtons();
         for (Object button : buttons) {
             ((Button) button).setBackgroundColor(color);
