@@ -1,12 +1,14 @@
 package com.example.visimpaired.VoiceAssistant
 
 import android.app.Activity
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
+import android.net.wifi.WifiManager
+import android.os.BatteryManager
 import android.os.Binder
 import android.os.Bundle
 import android.os.Handler
@@ -15,105 +17,87 @@ import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.visimpaired.MainActivity
+import com.example.visimpaired.Menu.Item
+import com.example.visimpaired.Settings.SettingsHelper
 import com.example.visimpaired.TTSConfig
+import com.example.visimpaired.Weather.ChooseWeatherForcastList
 import com.example.visimpaired.Weather.WeatherForcastItem
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class VoiceAssistantService : Service() {
-    private lateinit var speechRecognizer: SpeechRecognizer
     private val binder = LocalBinder()
+    private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var tts: TTSConfig
     private var isWaitingForWakeWord = true
+    private val handler = Handler(Looper.getMainLooper())
+    private var recognitionRunnable: Runnable? = null
     private lateinit var context: Context
     private lateinit var activity: Activity
+    private lateinit var settingsHelper: SettingsHelper
 
     companion object {
-        private const val NOTIFICATION_ID = 101
-        private const val CHANNEL_ID = "voice_assistant_channel"
+        private const val LISTENING_DELAY = 500L
         private val WAKE_WORD = arrayOf("визи", "вези", "виз", "вез", "везе", "визе", "безе", "бези", "бизе", "бизи")
     }
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification())
+        initializeSpeechRecognizer()
+        startForegroundService()
+        scheduleRecognition()
+    }
+
+    private fun startForegroundService() {
+        val channel = NotificationChannel("voice_assistant_channel", "Голосовой помощник", NotificationManager.IMPORTANCE_LOW)
+            .apply { description = "Фоновое распознавание голоса" }
+
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+            .createNotificationChannel(channel)
+
+        val notification = NotificationCompat.Builder(this, "voice_assistant_channel").build()
+        startForeground(1, notification)
+    }
+
+    private fun initializeSpeechRecognizer() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
             setRecognitionListener(object : RecognitionListener {
                 override fun onResults(results: Bundle) {
-                    val text = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.get(0)?.lowercase() ?: return
-                    if (isWaitingForWakeWord) {
-                        if (findWakeWord(text)) {
-                            onWakeWordDetected(text)
-                        }
-                    } else {
-                        processCommand(text, false)
-                    }
-                }
-
-                override fun onEndOfSpeech() {
-                    if (!isWaitingForWakeWord) {
-                        startListening(commandMode = true)
-                    }
-                }
-
-                override fun onPartialResults(partialResults: Bundle?) {
-                    return
-                }
-
-                override fun onEvent(eventType: Int, params: Bundle?) {
-                    return
-                }
-
-                override fun onReadyForSpeech(params: Bundle?) {
-                    return
-                }
-
-                override fun onBeginningOfSpeech() {
-                    return
-                }
-
-                override fun onRmsChanged(rmsdB: Float) {
-                    return
-                }
-
-                override fun onBufferReceived(buffer: ByteArray?) {
-                    return
+                    processResults(results)
+                    scheduleRecognition()
                 }
 
                 override fun onError(error: Int) {
-                    val errorMessage = when (error) {
-                        SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
-                        SpeechRecognizer.ERROR_CLIENT -> "Client side error"
-                        else -> "Unknown error: $error"
-                    }
-                    Log.e("VoiceAssistant", errorMessage)
-                    if (error != SpeechRecognizer.ERROR_NO_MATCH) {
-                        startListening(isWaitingForWakeWord)
-                    } else {
-                        Handler(Looper.getMainLooper()).postDelayed({ startListening(isWaitingForWakeWord) },  1 * 1000)
+                    when (error) {
+                        SpeechRecognizer.ERROR_NO_MATCH -> handler.postDelayed({
+                            scheduleRecognition()
+                        }, 1000)
+                        else -> scheduleRecognition()
                     }
                 }
+
+                override fun onReadyForSpeech(params: Bundle?) {}
+                override fun onBeginningOfSpeech() {}
+                override fun onRmsChanged(rmsdB: Float) {}
+                override fun onBufferReceived(buffer: ByteArray?) {}
+                override fun onEndOfSpeech() {}
+                override fun onPartialResults(partialResults: Bundle?) {}
+                override fun onEvent(eventType: Int, params: Bundle?) {}
             })
         }
-
-        startListening()
     }
 
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel(CHANNEL_ID, "Voice Assistant", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "Voice command recognition"
+    private fun scheduleRecognition() {
+        recognitionRunnable?.let { handler.removeCallbacks(it) }
+        recognitionRunnable = Runnable {
+            startListening()
+        }.also {
+            handler.postDelayed(it, LISTENING_DELAY)
         }
-        getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Голосовой помощник")
-            .setContentText("Слушает команды...")
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
     }
 
     private fun findWakeWord(text : String): Boolean {
@@ -132,35 +116,58 @@ class VoiceAssistantService : Service() {
         tts = TTSConfig.getInstance(context)
         this.context = context
         this.activity = activity
+        settingsHelper = SettingsHelper(activity, context, tts)
     }
 
-    private fun onWakeWordDetected(command: String) {
-        processCommand(command, true)
-    }
-
-    private fun startListening(commandMode: Boolean = false) {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
-            if (commandMode) {
-                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-            } else {
+    private fun startListening() {
+        try {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
                 putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             }
+            speechRecognizer.startListening(intent)
+        } catch (e: Exception) {
+            scheduleRecognition()
         }
-        speechRecognizer.startListening(intent)
+    }
+
+    private fun processResults(results: Bundle) {
+        val text = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+            ?.firstOrNull()?.lowercase() ?: return
+        println(text)
+        if (isWaitingForWakeWord) {
+            if (findWakeWord(text)) {
+                isWaitingForWakeWord = false
+                tts.speak("Слушаю вас") {
+                    handler.post { startListening() }
+                }
+            }
+        } else {
+            processCommand(text, false)
+            isWaitingForWakeWord = true
+        }
     }
 
     private fun processCommand(command: String, isWithVisi : Boolean) {
         isWaitingForWakeWord = true
         when {
+            //С интернетом
             command.contains("погод") -> sayTodayWeather(command)
             command.contains("камер") -> sayTextFromCamera()
             command.contains("галер") -> sayTextFromGallery()
+            //Без интернета
+            command.contains("выключ") -> turnOffOnCommands(command, false)
+            command.contains("включ") -> turnOffOnCommands(command, true)
+            command.contains("врем") -> settingsHelper.getCurrentTime()
+            isDayCommand(command) -> settingsHelper.getDateWithDayOfWeek()
+            command.contains("заряд") -> settingsHelper.speakBatteryLevel(context)
+            command.contains("bluetooth") -> settingsHelper.speakBluetoothStatus(context)
+            command.contains("wifi") -> settingsHelper.speakWifiStatus(context)
             else -> if (isWithVisi) { isWaitingForWakeWord = false }
                     else { tts.speak("Такой команды нет") }
         }
-        startListening(commandMode = true)
+        startListening()
     }
 
     override fun onDestroy() {
@@ -168,8 +175,34 @@ class VoiceAssistantService : Service() {
         super.onDestroy()
     }
 
+    private fun isDayCommand(command: String): Boolean {
+        return when {
+            command.contains("дат") -> true
+            command.contains("день") -> true
+            command.contains("число") -> true
+            else -> false
+        }
+    }
+
+    private fun turnOffOnCommands(command: String, isTurnOn : Boolean) {
+        when {
+            command.contains("фонарик") -> settingsHelper.toggleFlashlight(isTurnOn)
+            command.contains("bluetooth") -> settingsHelper.bluetoothEnabled(context)
+        }
+    }
+
     private fun sayTodayWeather(text : String) {
-        WeatherForcastItem("1", context, text.split(" ")[1]).onEnter()
+        if (text.split(" ").size > 1) {
+            WeatherForcastItem("1", context, text.split(" ")[1]).onEnter()
+        } else {
+            val shard = activity.getPreferences(MODE_PRIVATE).all
+            val city = shard["city"] as String?
+            if (city != null) {
+                WeatherForcastItem("1", context, city).onEnter()
+            } else {
+                tts.speak("После слова погода нужно сказать название города")
+            }
+        }
     }
 
     private fun sayTextFromGallery() {
@@ -179,4 +212,5 @@ class VoiceAssistantService : Service() {
     private fun sayTextFromCamera() {
         (activity as MainActivity).takePhoto()
     }
+
 }

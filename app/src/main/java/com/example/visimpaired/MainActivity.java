@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         LinkedHashMap<String, Item> items = new LinkedHashMap<>();
         items.put("Почта", new EnterMailItem("Почта", MainActivity.this));
         items.put("Погода", new CitiesWeatherList("Погода", MainActivity.this));
-        items.put("Настройки", new SettingsList(MainActivity.this,"Настройки"));
+        items.put("Настройки", new SettingsList(MainActivity.this, MainActivity.this,"Настройки"));
         items.put("Послушать, что на фото", new ChooseOrMakePhotoItem("Послушать, что на фото", getActivity()));
         Item rootMenu = new Item(MainActivity.this, "Главное меню", items);
         return new Menu(rootMenu, MainActivity.this);
@@ -150,5 +150,35 @@ public class MainActivity extends AppCompatActivity {
         for (Object button : buttons) {
             ((Button) button).setBackgroundColor(color);
         }
+    }
+
+    private Boolean getVoiceAssistantBackgroundStatus() {
+        return this.getPreferences(MODE_PRIVATE).getBoolean("isVoiceAssistantBackgroundEnable", true);
+    }
+
+    private void startVoiceAssistant() {
+        if (getVoiceAssistantBackgroundStatus()) {
+            Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
+            startForegroundService(serviceIntent);
+        }
+    }
+
+    private void stopVoiceAssistant() {
+        if (getVoiceAssistantBackgroundStatus()) {
+            Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
+            stopService(serviceIntent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startVoiceAssistant();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopVoiceAssistant();
     }
 }
