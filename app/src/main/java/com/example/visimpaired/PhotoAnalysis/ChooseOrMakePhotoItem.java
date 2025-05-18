@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 public class ChooseOrMakePhotoItem extends Item implements LifecycleItem {
 
     private Activity activity;
-    private int countEnter = 0;
 
     public ChooseOrMakePhotoItem(String name, Activity activity) {
         super(activity, name);
@@ -19,8 +18,6 @@ public class ChooseOrMakePhotoItem extends Item implements LifecycleItem {
 
     @Override
     public void loadItems() {
-        countEnter += 1;
-        System.out.println(countEnter);
         LinkedHashMap<String, Item> variants = new LinkedHashMap<>();
         variants.put("Сделать фото", new MakePhotoItem("Сделать фото", activity));
         variants.put("Выбрать из галереи", new ChoosePhotoItem("Выбрать из галереи", activity));

@@ -15,7 +15,7 @@ class VoiceAssistantBackground(context: Context, private val activity: Activity,
         val shard = activity.getPreferences(MODE_PRIVATE)
         val isEnable = shard.all.getOrDefault("isVoiceAssistantBackgroundEnable", false) as Boolean?
         shard.edit { putBoolean("isVoiceAssistantBackgroundEnable", !isEnable!!) }
-        if (isEnable!!)
+        if (!isEnable!!)
             this.name = "Голосовой ассистент вне приложения включён"
         else
             this.name = "Голосовой ассистент вне приложения выключён"

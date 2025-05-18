@@ -6,7 +6,7 @@ import com.example.visimpaired.Interfaces.LifecycleItem
 import com.example.visimpaired.Menu.Item
 import com.example.visimpaired.R
 
-class ColorList(context: Context?, name: String?) : Item(context, name), LifecycleItem {
+class ColorList(context: Context?, name: String?) : Item(context, "Выберите цвет"), LifecycleItem {
 
     override fun loadItems() {
         val colors = LinkedHashMap<String, Item>()

@@ -13,7 +13,7 @@ public class MakePhotoItem extends Item implements LifecycleItem, End {
     private Activity activity;
 
     public MakePhotoItem(String name, Activity activity) {
-        super(activity,name);
+        super(activity,"Сделайте фотографию");
         this.activity = activity;
     }
 

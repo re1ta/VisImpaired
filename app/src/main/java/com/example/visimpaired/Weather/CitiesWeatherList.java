@@ -23,7 +23,7 @@ public class CitiesWeatherList extends Item implements LifecycleItem {
     private Activity activity;
 
     public CitiesWeatherList(String name, Activity activity) {
-        super(activity, name);
+        super(activity, "Выберите город для прогноза");
         this.activity = activity;
     }
 

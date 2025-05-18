@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.jsoup)
     implementation(libs.datastore.core)
     implementation(libs.jsoup)
     implementation(libs.android.mail)

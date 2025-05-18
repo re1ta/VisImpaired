@@ -12,6 +12,7 @@ class SettingsList(private val activity: Activity, context: Context?, name: Stri
         settings["Поменять цвет интерфейса"] = ColorList(context, "Поменять цвет интерфейса")
         settings["Поменять скорость воспроизведение синтезатора речи"] = TTSSpeedListItem(context, "Поменять скорость воспроизведение синтезатора речи")
         settings["Вкл или выкл голосового ассистента вне приложения"] = VoiceAssistantBackground(context, activity, "Вкл или выкл голосового ассистента вне приложения")
+        settings["Инструкции"] = ManualList(context, "Инструкции")
         items = settings
     }
 }

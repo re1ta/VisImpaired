@@ -12,7 +12,7 @@ import java.util.Properties
 import javax.mail.Session
 import javax.mail.Store
 
-class MailFolderList(name: String?, private val context: Context) : Item(context, name), LifecycleItem {
+class MailFolderList(name: String?, private val context: Context) : Item(context, "Выберите папку с письмами"), LifecycleItem {
 
     private var store : Store
     private var folders : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))

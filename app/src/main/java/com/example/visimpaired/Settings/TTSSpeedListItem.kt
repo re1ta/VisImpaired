@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.visimpaired.Interfaces.LifecycleItem
 import com.example.visimpaired.Menu.Item
 
-class TTSSpeedListItem(context: Context?, name: String?) : Item(context, name), LifecycleItem {
+class TTSSpeedListItem(context: Context?, name: String?) : Item(context, "Выберите скорость"), LifecycleItem {
     override fun loadItems() {
         val speed = LinkedHashMap<String, Item>()
         var i = 0.0f

@@ -15,7 +15,7 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMultipart
 import javax.mail.util.ByteArrayDataSource
 
-class MessageItem (private val context: Context, name: String?, private val messageItem: Message): Item(context, name), LifecycleItem {
+class MessageItem (private val context: Context, name: String?, private val messageItem: Message): Item(context, "Выберите, что прослушать в письме"), LifecycleItem {
 
     private var senders : String = ""
     private var mail : LinkedHashMap<String, Item> = linkedMapOf("Подождите, Пожалуйста" to Item(context,"Подождите, Пожалуйста"))

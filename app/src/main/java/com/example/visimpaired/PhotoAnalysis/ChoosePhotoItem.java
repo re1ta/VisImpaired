@@ -12,7 +12,7 @@ public class ChoosePhotoItem extends Item implements LifecycleItem, End {
     private Activity activity;
 
     public ChoosePhotoItem(String name, Activity activity) {
-        super(activity, name);
+        super(activity, "Выберите фото из галереи");
         this.activity = activity;
     }
 

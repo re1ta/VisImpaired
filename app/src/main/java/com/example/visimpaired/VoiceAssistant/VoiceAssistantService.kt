@@ -4,11 +4,8 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
-import android.net.wifi.WifiManager
-import android.os.BatteryManager
 import android.os.Binder
 import android.os.Bundle
 import android.os.Handler
@@ -19,15 +16,9 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import androidx.core.app.NotificationCompat
 import com.example.visimpaired.MainActivity
-import com.example.visimpaired.Menu.Item
 import com.example.visimpaired.Settings.SettingsHelper
 import com.example.visimpaired.TTSConfig
-import com.example.visimpaired.Weather.ChooseWeatherForcastList
 import com.example.visimpaired.Weather.WeatherForcastItem
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class VoiceAssistantService : Service() {
     private val binder = LocalBinder()
@@ -39,9 +30,11 @@ class VoiceAssistantService : Service() {
     private lateinit var context: Context
     private lateinit var activity: Activity
     private lateinit var settingsHelper: SettingsHelper
+    private lateinit var mailVoice : MailVoiceControl
+    private var outApp = false
 
     companion object {
-        private const val LISTENING_DELAY = 500L
+        private const val LISTENING_DELAY = 100L
         private val WAKE_WORD = arrayOf("визи", "вези", "виз", "вез", "везе", "визе", "безе", "бези", "бизе", "бизи")
     }
 
@@ -50,6 +43,10 @@ class VoiceAssistantService : Service() {
         initializeSpeechRecognizer()
         startForegroundService()
         scheduleRecognition()
+    }
+
+    fun setOutApp(status : Boolean) {
+        outApp = status
     }
 
     private fun startForegroundService() {
@@ -70,16 +67,13 @@ class VoiceAssistantService : Service() {
                     processResults(results)
                     scheduleRecognition()
                 }
-
                 override fun onError(error: Int) {
                     when (error) {
                         SpeechRecognizer.ERROR_NO_MATCH -> handler.postDelayed({
-                            scheduleRecognition()
-                        }, 1000)
+                            scheduleRecognition() }, 1000)
                         else -> scheduleRecognition()
                     }
                 }
-
                 override fun onReadyForSpeech(params: Bundle?) {}
                 override fun onBeginningOfSpeech() {}
                 override fun onRmsChanged(rmsdB: Float) {}
@@ -89,6 +83,7 @@ class VoiceAssistantService : Service() {
                 override fun onEvent(eventType: Int, params: Bundle?) {}
             })
         }
+
     }
 
     private fun scheduleRecognition() {
@@ -116,19 +111,22 @@ class VoiceAssistantService : Service() {
         tts = TTSConfig.getInstance(context)
         this.context = context
         this.activity = activity
+        mailVoice = MailVoiceControl(context, activity)
         settingsHelper = SettingsHelper(activity, context, tts)
     }
 
-    private fun startListening() {
-        try {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
-                putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+     fun startListening() {
+        if (outApp == false) {
+            try {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
+                    putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                }
+                speechRecognizer.startListening(intent)
+            } catch (_: Exception) {
+                scheduleRecognition()
             }
-            speechRecognizer.startListening(intent)
-        } catch (e: Exception) {
-            scheduleRecognition()
         }
     }
 
@@ -156,6 +154,7 @@ class VoiceAssistantService : Service() {
             command.contains("погод") -> sayTodayWeather(command)
             command.contains("камер") -> sayTextFromCamera()
             command.contains("галер") -> sayTextFromGallery()
+            mailCommands(command) -> mailVoice.routeCommand(command)
             //Без интернета
             command.contains("выключ") -> turnOffOnCommands(command, false)
             command.contains("включ") -> turnOffOnCommands(command, true)
@@ -173,6 +172,16 @@ class VoiceAssistantService : Service() {
     override fun onDestroy() {
         speechRecognizer.destroy()
         super.onDestroy()
+    }
+
+    private fun mailCommands(command: String) : Boolean {
+        return when {
+            command.contains("последн") && command.contains("письм") -> true
+            command.contains("след") && command.contains("письм") -> true
+            command.contains("пред") && command.contains("письм") -> true
+            command.contains("перв") && command.contains("письм") -> true
+            else -> false
+        }
     }
 
     private fun isDayCommand(command: String): Boolean {

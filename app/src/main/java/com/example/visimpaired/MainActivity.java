@@ -27,12 +27,15 @@ import com.example.visimpaired.Menu.Item;
 import com.example.visimpaired.PhotoAnalysis.ChooseOrMakePhotoItem;
 import com.example.visimpaired.PhotoAnalysis.PhotoService;
 import com.example.visimpaired.Settings.SettingsList;
+import com.example.visimpaired.VoiceAssistant.MailVoiceControl;
 import com.example.visimpaired.VoiceAssistant.VoiceAssistantService;
 import com.example.visimpaired.Weather.CitiesWeatherList;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.mail.MessagingException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Menu createStartMenu(){
         LinkedHashMap<String, Item> items = new LinkedHashMap<>();
-        items.put("Почта", new EnterMailItem("Почта", MainActivity.this));
+        items.put("Почта", new EnterMailItem(MainActivity.this, "Почта"));
         items.put("Погода", new CitiesWeatherList("Погода", MainActivity.this));
         items.put("Настройки", new SettingsList(MainActivity.this, MainActivity.this,"Настройки"));
         items.put("Послушать, что на фото", new ChooseOrMakePhotoItem("Послушать, что на фото", getActivity()));
@@ -153,21 +156,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Boolean getVoiceAssistantBackgroundStatus() {
-        return this.getPreferences(MODE_PRIVATE).getBoolean("isVoiceAssistantBackgroundEnable", true);
+        return this.getPreferences(MODE_PRIVATE).getBoolean("isVoiceAssistantBackgroundEnable", false);
     }
 
     private void startVoiceAssistant() {
-        if (getVoiceAssistantBackgroundStatus()) {
-            Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
-            startForegroundService(serviceIntent);
+        if (voiceService != null) {
+            voiceService.setOutApp(false);
+            voiceService.startListening();
         }
     }
 
     private void stopVoiceAssistant() {
-        if (getVoiceAssistantBackgroundStatus()) {
-            Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
-            stopService(serviceIntent);
-        }
+        voiceService.setOutApp(!getVoiceAssistantBackgroundStatus());
+    }
+
+    private void closeStore() {
+        Thread closeMail = new Thread(() -> {
+            if (MailVoiceControl.store != null) {
+                if (MailVoiceControl.store.isConnected()) {
+                    try {
+                        MailVoiceControl.store.close();
+                    } catch (MessagingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+        closeMail.start();
     }
 
     @Override
@@ -179,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        closeStore();
         stopVoiceAssistant();
     }
 }

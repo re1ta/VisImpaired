@@ -12,8 +12,8 @@ public class EnterMailItem extends Item implements LifecycleItem {
 
     private Context context;
 
-    public EnterMailItem(String name, Context context) {
-        super(context, name);
+    public EnterMailItem(Context context, String name) {
+        super(context, "Влевом вверхнем углу появилось поле для ввода для данных");
         this.context = context;
     }
 
@@ -27,9 +27,9 @@ public class EnterMailItem extends Item implements LifecycleItem {
     public void loadItems() {
         ((MainActivity) context).enableKeyboard();
         LinkedHashMap<String, Item> saveAction = new LinkedHashMap<>();
+        saveAction.put("Войти в почту", new MailFolderList("Войти в почту", context));
         saveAction.put("Сохранить логин", new ConfirmTextInputItem("Подтвердить логин", context, "login"));
         saveAction.put("Сохранить пароль", new ConfirmTextInputItem("Подтвердить пароль", context, "password"));
-        saveAction.put("Подтвердить почту", new MailFolderList("Подтвердить почту", context));
         this.setItems(saveAction);
     }
 
