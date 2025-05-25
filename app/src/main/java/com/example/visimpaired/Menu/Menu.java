@@ -12,6 +12,7 @@ import java.util.List;
 public class Menu {
 
     private Item currentMenu;
+    private String prevElement;
     private String selected;
     private Context context;
 
@@ -69,6 +70,7 @@ public class Menu {
                 if (selectedItem.isMenu()) {
                     Item lastMenu = currentMenu;
                     currentMenu = selectedItem;
+                    prevElement = selected;
                     selected = getFirstItem();
                     if(selected == null){
                         if (selectedItem.getDescription() != null)
@@ -90,7 +92,7 @@ public class Menu {
                 ((LifecycleItem) currentMenu).onEscape();
             }
             currentMenu = currentMenu.getParent();
-            selected = getFirstItem();
+            selected = prevElement;
         }
     }
 

@@ -21,6 +21,7 @@ class RequestService( private var context : Context){
     private var API_KEY: String = "786d632f51d38fe61ef9169f485cf6b9"
 
     fun fetchData(base64_image : String) {
+        TTSConfig.getInstance(context).speak("Подождите 5 секунд")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = doRequestToITT(API_URL, jsonInputString = "{\"api_key\": \"${API_KEY}\", \"image\": \"${base64_image}\"}"

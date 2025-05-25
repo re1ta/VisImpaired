@@ -167,7 +167,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void stopVoiceAssistant() {
-        voiceService.setOutApp(!getVoiceAssistantBackgroundStatus());
+        if (voiceService != null) {
+            voiceService.setOutApp(!getVoiceAssistantBackgroundStatus());
+        }
     }
 
     private void closeStore() {

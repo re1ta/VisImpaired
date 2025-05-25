@@ -37,7 +37,6 @@ public class PhotoService extends MainActivity {
 
     private static final int REQUEST_CODE_GALLERY = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
-    private static final int REQUEST_CODE_PERMISSIONS = 100;
     private String currentPhotoPath;
     private String selectedPhotoPath;
     private final Context context;
@@ -80,7 +79,7 @@ public class PhotoService extends MainActivity {
                 TTSConfig.getInstance(getContext()).speak("Разрешение на камеру не дано!");
             }
         }
-        else if (requestCode == REQUEST_CODE_GALLERY){
+        else if (requestCode == REQUEST_CODE_GALLERY) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openGallery();
             } else {
