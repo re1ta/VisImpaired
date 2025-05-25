@@ -18,7 +18,7 @@ public class ChooseWeatherForcastList extends Item implements LifecycleItem {
     private String name;
 
     public ChooseWeatherForcastList(String name, Context context) {
-        super(context, "Выберите прогноз");
+        super(context, name, "Выберите прогноз");
         this.name = name;
         this.context = context;
     }

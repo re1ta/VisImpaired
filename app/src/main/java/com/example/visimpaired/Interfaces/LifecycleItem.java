@@ -7,7 +7,11 @@ public interface LifecycleItem {
     default void onEnter(){
         loadItems();
         Item item = (Item) this;
-        TTSConfig.getInstance(item.getContext()).speak(item.getName());
+        if (item.getDescription() != null) {
+            TTSConfig.getInstance(item.getContext()).speak(item.getDescription());
+        } else {
+            TTSConfig.getInstance(item.getContext()).speak(item.getName());
+        }
     }
 
     default void onEscape() {

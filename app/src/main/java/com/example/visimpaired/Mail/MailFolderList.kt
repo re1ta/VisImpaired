@@ -51,7 +51,7 @@ class MailFolderList(name: String?, private val context: Context) : Item(context
             val rootFolder = store.defaultFolder
             val foldersMail = rootFolder.list()
             for (folder in foldersMail) {
-                items[folder.name] = FolderMailMode(context, folder.name, folder)
+                items[folder.name] = FolderMailMode(context, folder.name, folder, this@MailFolderList)
             }
             items.remove("Подождите, Пожалуйста")
         }

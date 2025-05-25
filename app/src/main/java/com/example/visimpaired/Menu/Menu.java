@@ -12,7 +12,6 @@ import java.util.List;
 public class Menu {
 
     private Item currentMenu;
-    private String prevElement;
     private String selected;
     private Context context;
 
@@ -70,7 +69,6 @@ public class Menu {
                 if (selectedItem.isMenu()) {
                     Item lastMenu = currentMenu;
                     currentMenu = selectedItem;
-                    prevElement = selected;
                     selected = getFirstItem();
                     if(selected == null){
                         if (selectedItem.getDescription() != null)
@@ -91,8 +89,13 @@ public class Menu {
             if (currentMenu instanceof LifecycleItem) {
                 ((LifecycleItem) currentMenu).onEscape();
             }
+            selected = currentMenu.getName();
             currentMenu = currentMenu.getParent();
-            selected = prevElement;
+            if (currentMenu.getDescription() != null) {
+                TTSConfig.getInstance(currentMenu.getContext()).speak(currentMenu.getDescription());
+            } else {
+                TTSConfig.getInstance(currentMenu.getContext()).speak(currentMenu.getName());
+            }
         }
     }
 
