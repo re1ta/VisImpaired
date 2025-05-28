@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<Object> getAllButtons(){
-        return List.of(findViewById(R.id.leftButton), findViewById(R.id.confirmButton), findViewById(R.id.rightButton), findViewById(R.id.escapeButton));
+        return List.of(findViewById(R.id.leftButton), findViewById(R.id.confirmButton), findViewById(R.id.rightButton), findViewById(R.id.escapeButton), findViewById(R.id.helpButton), findViewById(R.id.mainButton));
     }
 
     private Menu createStartMenu(){

@@ -1,83 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#050505">
 
-    <Button
-        android:id="@+id/leftButton"
-        android:layout_width="234dp"
-        android:layout_height="166dp"
-        android:text="@string/leftButton"
-        android:textColor="@color/black"
-        android:textColorHighlight="@color/Фиолетовый"
-        android:textColorHint="@color/Фиолетовый"
-        android:textColorLink="@color/Фиолетовый"
-        android:textSize="34sp"
-        android:backgroundTint="@color/Жёлтый"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <!-- Основной контейнер с тремя колонками -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:rippleColor="@color/Фиолетовый" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <Button
-        android:id="@+id/rightButton"
-        android:layout_width="234dp"
-        android:layout_height="166dp"
-        android:textColor="@color/black"
-        android:text="@string/rightButton"
-        android:textColorHighlight="@color/Фиолетовый"
-        android:textColorHint="@color/Фиолетовый"
-        android:textColorLink="@color/Фиолетовый"
-        android:textSize="34sp"
-        android:backgroundTint="@color/Жёлтый"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rippleColor="@color/Фиолетовый" />
+        <!-- Левый столбец -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
 
-    <Button
-        android:id="@+id/confirmButton"
-        android:layout_width="234dp"
-        android:layout_height="166dp"
-        android:text="@string/confirmButton"
-        android:textColor="@color/black"
-        android:textColorHighlight="@color/Фиолетовый"
-        android:textColorHint="@color/Фиолетовый"
-        android:textColorLink="@color/Фиолетовый"
-        android:textSize="34sp"
-        android:backgroundTint="@color/Жёлтый"
-        app:layout_constraintEnd_toStartOf="@+id/rightButton"
-        app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:rippleColor="@color/Фиолетовый"
-        tools:layout_editor_absoluteY="7dp" />
+            <!-- Кнопка "Влево" -->
 
-    <Button
-        android:id="@+id/escapeButton"
-        android:layout_width="234dp"
-        android:layout_height="166dp"
-        android:text="@string/escapeButton"
-        android:textColor="@color/black"
-        android:textColorHighlight="@color/Фиолетовый"
-        android:textColorHint="@color/Фиолетовый"
-        android:textColorLink="@color/Фиолетовый"
-        android:textSize="34sp"
-        android:backgroundTint="@color/Жёлтый"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rightButton"
-        app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toBottomOf="@+id/confirmButton"
-        app:layout_constraintVertical_bias="0.8"
-        app:rippleColor="@color/Фиолетовый" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInput"
+                android:layout_width="282dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="@string/textInput" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/textInput"
-        android:layout_width="186dp"
-        android:layout_height="57dp"
-        android:text="@string/textInput"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
+            <Button
+                android:id="@+id/leftButton"
+                android:layout_width="234dp"
+                android:layout_height="166dp"
+                android:layout_weight="0.6"
+                android:backgroundTint="@color/Жёлтый"
+                android:text="@string/leftButton"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="34sp"
+                app:rippleColor="@color/Фиолетовый" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_weight="0.2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Главное &#10; меню"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                tools:visibility="invisible" />
+
+        </LinearLayout>
+
+        <!-- Центральный столбец -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/confirmButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/Жёлтый"
+                    android:text="@string/confirmButton"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textSize="34sp"
+                    app:rippleColor="@color/Фиолетовый" />
+
+                <Button
+                    android:id="@+id/escapeButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/Жёлтый"
+                    android:text="@string/escapeButton"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textSize="34sp"
+                    app:rippleColor="@color/Фиолетовый" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Правый столбец -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:layout_weight="0.2"
+                android:id="@+id/helpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/Жёлтый"
+                android:text="@string/helpButton"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <!-- Кнопка "Вправо" -->
+            <Button
+                android:layout_weight="0.6"
+                android:id="@+id/rightButton"
+                android:layout_width="234dp"
+                android:layout_height="166dp"
+                android:backgroundTint="@color/Жёлтый"
+                android:text="@string/rightButton"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="34sp"
+                app:rippleColor="@color/Фиолетовый" />
+
+            <Button
+                android:layout_weight="0.2"
+                android:id="@+id/mainButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/Жёлтый"
+                android:text="Главное &#10; меню"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Дублирующие кнопки для выравнивания (невидимые) -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

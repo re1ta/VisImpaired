@@ -32,6 +32,8 @@ public class ButtonHandler{
         actions.put(R.id.rightButton, withVibrationAndSpeak(() -> menu.changeSelectedItem("right")));
         actions.put(R.id.confirmButton, withVibrationAndSpeak(this::handleConfirmButton));
         actions.put(R.id.escapeButton, withVibrationAndSpeak(this::handleEscapeButton));
+        actions.put(R.id.helpButton, withVibrationAndSpeak(() -> menu.sayHelp()));
+        actions.put(R.id.mainButton, withVibrationAndSpeak(() -> menu.goMain()));
 
         for (Object button : buttons) {
             Button btn = (Button) button;

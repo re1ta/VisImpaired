@@ -48,12 +48,16 @@ class MailFolderList(name: String?, private val context: Context) : Item(context
             val login = shard.getString("login", "")
             val password = shard.getString("password", "")
             store.connect("imap.mail.ru", login, password)
-            val rootFolder = store.defaultFolder
-            val foldersMail = rootFolder.list()
-            for (folder in foldersMail) {
-                items[folder.name] = FolderMailMode(context, folder.name, folder, this@MailFolderList)
+            if (store.isConnected) {
+                val rootFolder = store.defaultFolder
+                val foldersMail = rootFolder.list()
+                for (folder in foldersMail) {
+                    items[folder.name] = FolderMailMode(context, folder.name, folder, this@MailFolderList)
+                }
+                items.remove("Подождите, Пожалуйста")
+            } else {
+                onEscape()
             }
-            items.remove("Подождите, Пожалуйста")
         }
     }
 

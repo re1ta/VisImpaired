@@ -102,4 +102,26 @@ public class Menu {
     public Item getCurrentMenu() {
         return currentMenu;
     }
+
+    public void sayHelp() {
+        Item mainItem = currentMenu;
+        if(mainItem.getParent() != null) {
+            while (mainItem.getParent().getParent() != null) {
+                mainItem = mainItem.getParent();
+            }
+        }
+        String textToSay = (mainItem.getDescription() != null) ? mainItem.getDescription() : mainItem.getName() + " " +
+                ((currentMenu.getDescription() != null) ? currentMenu.getDescription() : currentMenu.getName());
+        TTSConfig.getInstance(context).speak(textToSay);
+    }
+
+    public void goMain() {
+        Item mainItem = currentMenu;
+        while (mainItem.getParent() != null) {
+            mainItem = mainItem.getParent();
+        }
+        currentMenu = mainItem;
+        selected = getFirstItem();
+        TTSConfig.getInstance(context).speak("Главное меню");
+    }
 }
