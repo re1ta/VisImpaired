@@ -13,6 +13,7 @@ public class Menu {
 
     private Item currentMenu;
     private String selected;
+    private String modeName;
     private Context context;
 
     public Menu(Item rootMenu, Context context) {
@@ -69,6 +70,9 @@ public class Menu {
                 if (selectedItem.isMenu()) {
                     Item lastMenu = currentMenu;
                     currentMenu = selectedItem;
+                    if (currentMenu.getParent().getName().equals("Главное меню")) {
+                        modeName = currentMenu.getName();
+                    }
                     selected = getFirstItem();
                     if(selected == null){
                         if (selectedItem.getDescription() != null)
@@ -106,13 +110,13 @@ public class Menu {
     public void sayHelp() {
         Item mainItem = currentMenu;
         if(mainItem.getParent() != null) {
-            while (mainItem.getParent().getParent() != null) {
-                mainItem = mainItem.getParent();
-            }
+            String textToSay = modeName + " " +
+                    ((currentMenu.getDescription() != null) ? currentMenu.getDescription() : currentMenu.getName());
+            TTSConfig.getInstance(context).speak(textToSay);
+        } else {
+            String textToSay = selected + " " + ((currentMenu.getDescription() != null) ? currentMenu.getDescription() : currentMenu.getName());
+            TTSConfig.getInstance(context).speak(textToSay);
         }
-        String textToSay = (mainItem.getDescription() != null) ? mainItem.getDescription() : mainItem.getName() + " " +
-                ((currentMenu.getDescription() != null) ? currentMenu.getDescription() : currentMenu.getName());
-        TTSConfig.getInstance(context).speak(textToSay);
     }
 
     public void goMain() {

@@ -122,6 +122,10 @@ class VoiceAssistantService : Service() {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                    putExtra("android.speech.extra.GET_AUDIO", false)
+                    putExtra("android.speech.extras.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS", 0)
+                    putExtra("android.speech.extras.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS", 0)
+                    putExtra("android.speech.extras.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS", 0)
                 }
                 speechRecognizer.startListening(intent)
             } catch (_: Exception) {

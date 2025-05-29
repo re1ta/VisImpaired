@@ -13,7 +13,7 @@ public class EnterMailItem extends Item implements LifecycleItem {
     private Context context;
 
     public EnterMailItem(Context context, String name) {
-        super(context, "Влевом вверхнем углу появилось поле для ввода для данных");
+        super(context, name, "Влевом вверхнем углу появилось поле для ввода для данных");
         this.context = context;
     }
 

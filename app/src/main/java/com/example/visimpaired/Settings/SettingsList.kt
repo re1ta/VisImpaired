@@ -6,7 +6,7 @@ import com.example.visimpaired.Interfaces.LifecycleItem
 import com.example.visimpaired.Menu.Item
 import java.util.LinkedHashMap
 
-class SettingsList(private val activity: Activity, context: Context?, name: String?) : Item(context, name), LifecycleItem {
+class SettingsList(private val activity: Activity, context: Context?, name: String?) : Item(context, name, "Выберите настройки"), LifecycleItem {
     override fun loadItems() {
         val settings = LinkedHashMap<String, Item>()
         settings["Поменять цвет интерфейса"] = ColorList(context, "Поменять цвет интерфейса")
