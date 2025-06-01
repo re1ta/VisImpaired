@@ -15,7 +15,9 @@ import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.visimpaired.MainActivity
 import com.example.visimpaired.TTSConfig
+import com.example.visimpaired.VoiceAssistant.VoiceAssistantService
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -23,10 +25,15 @@ import java.util.Locale
 
 class SettingsHelper(private val activity: Activity, private val context : Context, private val tts : TTSConfig) {
 
+    private fun getVoiceService() : VoiceAssistantService {
+        return (activity as MainActivity).voiceService
+    }
+
     fun toggleFlashlight(enabled: Boolean) {
         val cameraManager = context.getSystemService(CAMERA_SERVICE) as CameraManager
         try {
             cameraManager.setTorchMode(cameraManager.cameraIdList[0], enabled)
+            getVoiceService().startListening()
         } catch (e: Exception) {
             tts.speak("Ошибка фонарика")
         }

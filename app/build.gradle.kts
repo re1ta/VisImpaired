@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation("ai.picovoice:porcupine-android:3.0.0")
     implementation(libs.jsoup)
     implementation(libs.datastore.core)
     implementation(libs.jsoup)

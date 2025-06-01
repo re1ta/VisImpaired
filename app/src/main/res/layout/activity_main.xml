@@ -36,25 +36,28 @@
 
             <Button
                 android:id="@+id/leftButton"
-                android:layout_width="234dp"
+                android:layout_width="230dp"
                 android:layout_height="166dp"
                 android:layout_weight="0.6"
                 android:backgroundTint="@color/Жёлтый"
                 android:text="@string/leftButton"
                 android:textColor="@color/black"
                 android:gravity="center"
+                android:layout_gravity="left"
                 android:textSize="34sp"
                 app:rippleColor="@color/Фиолетовый" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/helpButton"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:layout_gravity="left"
+                android:layout_marginTop="10dp"
                 android:layout_weight="0.2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Главное &#10; меню"
-                android:textSize="30sp"
-                android:visibility="invisible"
-                tools:visibility="invisible" />
+                android:backgroundTint="@color/Жёлтый"
+                android:text="@string/helpButton"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
 
         </LinearLayout>
 
@@ -80,7 +83,9 @@
                     android:text="@string/confirmButton"
                     android:textColor="@color/black"
                     android:gravity="center"
+                    android:layout_gravity="top"
                     android:textSize="34sp"
+                    android:layout_marginBottom="10dp"
                     app:rippleColor="@color/Фиолетовый" />
 
                 <Button
@@ -92,7 +97,9 @@
                     android:text="@string/escapeButton"
                     android:textColor="@color/black"
                     android:gravity="center"
+                    android:layout_gravity="bottom"
                     android:textSize="34sp"
+                    android:layout_marginTop="10dp"
                     app:rippleColor="@color/Фиолетовый" />
             </LinearLayout>
         </LinearLayout>
@@ -105,36 +112,39 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <Button
-                android:layout_weight="0.2"
-                android:id="@+id/helpButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/Жёлтый"
-                android:text="@string/helpButton"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
             <!-- Кнопка "Вправо" -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInput2"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:layout_gravity="right"
+                android:text="@string/textInput"
+                android:visibility="invisible"
+                tools:visibility="invisible"/>
+
             <Button
                 android:layout_weight="0.6"
                 android:id="@+id/rightButton"
-                android:layout_width="234dp"
+                android:layout_width="230dp"
                 android:layout_height="166dp"
                 android:backgroundTint="@color/Жёлтый"
                 android:text="@string/rightButton"
                 android:textColor="@color/black"
                 android:gravity="center"
+                android:layout_gravity="right"
                 android:textSize="34sp"
                 app:rippleColor="@color/Фиолетовый" />
 
             <Button
                 android:layout_weight="0.2"
                 android:id="@+id/mainButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/Жёлтый"
-                android:text="Главное &#10; меню"
+                android:text="Меню"
+                android:layout_gravity="right"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
         </LinearLayout>

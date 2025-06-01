@@ -31,7 +31,7 @@ class WeatherForcastItem( name: String?, private val context: Context, private v
         pronouceWeather(city)
     }
 
-    private fun pronouceWeather(city: String?){
+    private fun pronouceWeather(city: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             val client = OkHttpClient()
             val url = HttpUrl.Builder()

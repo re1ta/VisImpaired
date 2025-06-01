@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -29,6 +30,7 @@ import com.example.visimpaired.PhotoAnalysis.PhotoService;
 import com.example.visimpaired.Settings.SettingsList;
 import com.example.visimpaired.VoiceAssistant.MailVoiceControl;
 import com.example.visimpaired.VoiceAssistant.VoiceAssistantService;
+import com.example.visimpaired.VoiceAssistant.WakeWordDetector;
 import com.example.visimpaired.Weather.CitiesWeatherList;
 
 import java.util.LinkedHashMap;
@@ -37,11 +39,15 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import ai.picovoice.porcupine.*;
+
 public class MainActivity extends AppCompatActivity {
 
     private static Menu menu;
     private PhotoService photoService;
     private VoiceAssistantService voiceService;
+    private WakeWordDetector wakeWordDetector;
+    private final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,16 +59,30 @@ public class MainActivity extends AppCompatActivity {
         new ButtonHandler(getContext(), menu).setupButton(getAllButtons());
         setShardSettings();
         setVoiceAssistant();
+        setWakeWordDetector();
     }
 
     private void setVoiceAssistant() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
-            int REQUEST_RECORD_AUDIO_PERMISSION = 200;
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
             return;
         }
         initializeVoiceService();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            boolean permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (!permissionToRecordAccepted) {
+                TTSConfig.getInstance(getContext()).speak("Голосовое управление выключено!");
+            } else {
+                initializeVoiceService();
+            }
+        }
     }
 
     private void initializeVoiceService() {
@@ -81,8 +101,21 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Intent serviceIntent = new Intent(this, VoiceAssistantService.class);
-        startForegroundService(serviceIntent);
+        startService(serviceIntent);
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void setWakeWordDetector() {
+        wakeWordDetector = new WakeWordDetector();
+        wakeWordDetector.initPorcupine(this);
+    }
+
+    public VoiceAssistantService getVoiceService() {
+        return voiceService;
+    }
+
+    public WakeWordDetector getWakeWordDetector() {
+        return wakeWordDetector;
     }
 
     private void setShardSettings() {
@@ -155,23 +188,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Boolean getVoiceAssistantBackgroundStatus() {
-        return this.getPreferences(MODE_PRIVATE).getBoolean("isVoiceAssistantBackgroundEnable", false);
-    }
-
-    private void startVoiceAssistant() {
-        if (voiceService != null) {
-            voiceService.setOutApp(false);
-            voiceService.startListening();
-        }
-    }
-
-    private void stopVoiceAssistant() {
-        if (voiceService != null) {
-            voiceService.setOutApp(!getVoiceAssistantBackgroundStatus());
-        }
-    }
-
     private void closeStore() {
         Thread closeMail = new Thread(() -> {
             if (MailVoiceControl.store != null) {
@@ -190,13 +206,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startVoiceAssistant();
+        wakeWordDetector.startListening();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         closeStore();
-        stopVoiceAssistant();
+        wakeWordDetector.stopListening();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wakeWordDetector.release();
     }
 }

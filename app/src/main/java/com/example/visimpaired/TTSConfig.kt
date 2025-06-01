@@ -6,7 +6,7 @@ import android.speech.tts.TextToSpeech.OnInitListener
 import android.speech.tts.UtteranceProgressListener
 import java.util.Locale
 
-class TTSConfig(context: Context?) : OnInitListener {
+class TTSConfig(private val context: Context?) : OnInitListener {
 
     var textToSpeech: TextToSpeech? = TextToSpeech(context, this)
 
